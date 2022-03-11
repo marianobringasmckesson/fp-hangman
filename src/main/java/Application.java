@@ -34,6 +34,7 @@ public final class Application {
 		                                   -> render the result
 	 */
 
+	// Homework: Try to generalize the asking
 	private static final Function<Environment, Unit> askForName = c -> c.println("Please enter your name: ");
 	private static final Function<Environment, String> readName = Console::readLine;
 
