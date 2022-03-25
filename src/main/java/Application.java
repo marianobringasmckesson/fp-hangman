@@ -1,5 +1,3 @@
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.function.Function;
 import functional.Tuple;
 import functional.Unit;
@@ -34,8 +32,9 @@ public final class Application {
 		                                   -> render the result
 	 */
 
-	// Homework: Try to generalize the asking
-	private static final Function<Environment, Unit> askForName = c -> c.println("Please enter your name: ");
+	private static final Function<String, Function<Environment, Unit>> askFor = m -> e -> e.println(m);
+
+	private static final Function<Environment, Unit> askForName = askFor.apply("Please enter your name: ");
 	private static final Function<Environment, String> readName = Console::readLine;
 
 	private static final Function<Environment, String> getPlayersName = zipRight(askForName, readName);
@@ -44,10 +43,21 @@ public final class Application {
 	private static final Function<Tuple<String, String>, HangmanState> initState = t -> initialize(t._1(), t._2());
 	private static final Function<Environment, HangmanState> initGame = zip(getPlayersName, pickWord).andThen(initState);
 
-	// private static final Function<Environment, HangmanState> f = e -> { HangmanState s = initGame.apply(e); e.println(s.toString()); return s; };
+	private static final Function<HangmanState, Function<Environment, HangmanState>> printState = hs -> zipRight(askFor.apply(hs.toString()),
+			                                                                                                       e -> hs);
+
+	private static final Function<Environment, HangmanState> beginGame = flatten(initGame.andThen(printState));
+
+	private static final Function<Environment, Character> askForLetter = zipRight(askFor.apply("Please enter a letter from a-z or any other to quit: "),
+			                                                                        Console::readCharacter);
+
+	private static final Function<Tuple<HangmanState, Character>, HangmanState> evaluateLetter = t -> t._1().play(t._2());
+
+	private static final Function<HangmanState, Function<Environment, HangmanState>> turn = hs -> flatten(zip(e -> hs, askForLetter).andThen(evaluateLetter).andThen(printState));
+
 
 	public static void main(String[] args) {
-
+		System.out.println("Hello " + getPlayersName.apply(new LiveEnvironment(new LiveConsole(), null)));
 	}
 
 }

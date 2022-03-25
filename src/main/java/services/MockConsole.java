@@ -25,6 +25,10 @@ public class MockConsole implements Console {
 		return inputs.next();
 	}
 
+	@Override public Character readCharacter() {
+		return null;
+	}
+
 	@Override public Unit println(String message) {
 		outputs.add(message);
 		return unit();

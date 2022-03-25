@@ -22,4 +22,9 @@ public final class FunctionUtils {
 	public static <A, B, C> Function<A, B> zipLeft(Function<A, B> f, Function<A, C> g) {
 		return zip(f, g).andThen(Tuple::_1);
 	}
+
+	public static <A, B> Function<A, B> flatten(Function<A, Function<A, B>> f) { return a -> f.apply(a).apply(a); }
+
+	public static <A, B, C> Function<A, C> flatMap(Function<A, B> f, Function<A, Function<B, C>> g) { return a -> g.apply(a).apply(f.apply(a)); }
+
 }
