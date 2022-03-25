@@ -46,15 +46,14 @@ public final class Application {
 	private static final Function<HangmanState, Function<Environment, HangmanState>> printState = hs -> zipRight(askFor.apply(hs.toString()),
 			                                                                                                       e -> hs);
 
-	private static final Function<Environment, HangmanState> beginGame = flatten(initGame.andThen(printState));
+	private static final Function<Environment, HangmanState> beginGame = flatMap(initGame, printState);
 
 	private static final Function<Environment, Character> askForLetter = zipRight(askFor.apply("Please enter a letter from a-z or any other to quit: "),
 			                                                                        Console::readCharacter);
 
 	private static final Function<Tuple<HangmanState, Character>, HangmanState> evaluateLetter = t -> t._1().play(t._2());
 
-	private static final Function<HangmanState, Function<Environment, HangmanState>> turn = hs -> flatten(zip(e -> hs, askForLetter).andThen(evaluateLetter).andThen(printState));
-
+	private static final Function<HangmanState, Function<Environment, HangmanState>> turn = hs -> flatMap(zip(e -> hs, askForLetter).andThen(evaluateLetter), printState);
 
 	public static void main(String[] args) {
 		System.out.println("Hello " + getPlayersName.apply(new LiveEnvironment(new LiveConsole(), null)));
