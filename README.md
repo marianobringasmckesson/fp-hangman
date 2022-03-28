@@ -30,3 +30,4 @@ We'll be introducing the concepts one by one.
 ### Sessions
 
 [First session](./docs/first-session.md)
+[Second session](./docs/second-session.md)
