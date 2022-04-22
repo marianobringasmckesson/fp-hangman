@@ -1,6 +1,7 @@
 package functional;
 
 import java.util.Objects;
+import java.util.function.Function;
 
 
 public class Tuple<A, B> {
@@ -43,5 +44,9 @@ public class Tuple<A, B> {
 
 	@Override public String toString() {
 		return "(" + fst + ", " + snd + ")";
+	}
+
+	public <C, D> Tuple<C, D> bimap(Function<? super A, ? extends C> f, Function<? super B, ? extends D> g) {
+		return tuple2(f.apply(fst), g.apply(snd));
 	}
 }

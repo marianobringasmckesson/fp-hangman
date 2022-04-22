@@ -41,7 +41,7 @@ public final class Application {
 	private static final Function<Environment, String> pickWord = Dictionary::pickWord;
 
 	private static final Function<Tuple<String, String>, HangmanState> initState = t -> initialize(t._1(), t._2());
-	private static final Function<Environment, HangmanState> initGame = zip(getPlayersName, pickWord).andThen(initState);
+	private static final Function<Environment, HangmanState> initGame = zip(getPlayersName, pickWord.andThen(String::toUpperCase)).andThen(initState);
 
 	private static final Function<HangmanState, Function<Environment, HangmanState>> printState = hs -> zipRight(askFor.apply(hs.toString()),
 			                                                                                                       e -> hs);
@@ -53,10 +53,22 @@ public final class Application {
 
 	private static final Function<Tuple<HangmanState, Character>, HangmanState> evaluateLetter = t -> t._1().play(t._2());
 
-	private static final Function<HangmanState, Function<Environment, HangmanState>> turn = hs -> flatMap(zip(e -> hs, askForLetter).andThen(evaluateLetter), printState);
+	private static final Function<HangmanState, Function<Environment, HangmanState>> turn = hs -> flatMap(zip(e -> hs, askForLetter.andThen(Character::toUpperCase)).andThen(evaluateLetter), printState);
+
+	// Homework: find a way to define loop as a Function variable so that it can be combined with beginGame.
+	private static HangmanState loop(Environment environment, HangmanState currentState) {
+		return currentState.isGameFinished() ? currentState : loop(environment, turn.apply(currentState).apply(environment));
+	}
 
 	public static void main(String[] args) {
-		System.out.println("Hello " + getPlayersName.apply(new LiveEnvironment(new LiveConsole(), null)));
+		Environment environment = new LiveEnvironment(new LiveConsole(), new Dictionary() {
+			@Override public String pickWord() {
+				return "cat";
+			}
+		});
+		HangmanState state = beginGame.apply(environment);
+		state = loop(environment, state);
+		System.out.println(state.getStatus());
 	}
 
 }

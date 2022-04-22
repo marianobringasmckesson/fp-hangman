@@ -25,4 +25,9 @@ public class LiveEnvironment implements Environment {
 	@Override public String pickWord() {
 		return dictionary.pickWord();
 	}
+
+	@Override
+	public Character readCharacter() {
+		return readLine().charAt(0);
+	}
 }
