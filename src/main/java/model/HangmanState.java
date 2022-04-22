@@ -75,6 +75,10 @@ public class HangmanState {
 		return status.toString();
 	}
 
+	public String getPlayer() {
+		return player;
+	}
+
 	private static final String HEAD        = "           O ";
 	private static final String BODY        = "           | ";
 	private static final String RIGHT_ARM   = "           |\\ ";
