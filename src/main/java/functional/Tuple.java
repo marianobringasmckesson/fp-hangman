@@ -1,10 +1,11 @@
 package functional;
 
 import java.util.Objects;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 
 
-public class Tuple<A, B> {
+public final class Tuple<A, B> {
 
 	private final A fst;
 
@@ -49,4 +50,13 @@ public class Tuple<A, B> {
 	public <C, D> Tuple<C, D> bimap(Function<? super A, ? extends C> f, Function<? super B, ? extends D> g) {
 		return tuple2(f.apply(fst), g.apply(snd));
 	}
+
+	public Tuple<B, A> swap() {
+		return tuple2(snd, fst);
+	}
+
+	public static <A> A concat(Tuple<A, A> pair, BiFunction<A, A, A> monoidalConcat) {
+		return monoidalConcat.apply(pair._1(), pair._2());
+	}
+
 }

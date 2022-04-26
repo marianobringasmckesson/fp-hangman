@@ -61,11 +61,7 @@ public final class Application {
 	}
 
 	public static void main(String[] args) {
-		Environment environment = new LiveEnvironment(new LiveConsole(), new Dictionary() {
-			@Override public String pickWord() {
-				return "cat";
-			}
-		});
+		Environment environment = new LiveEnvironment(new LiveConsole(), () -> "cat");
 		HangmanState state = beginGame.apply(environment);
 		state = loop(environment, state);
 		System.out.println(state.getStatus());

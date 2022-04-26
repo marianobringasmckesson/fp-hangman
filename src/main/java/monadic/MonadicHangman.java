@@ -15,7 +15,8 @@ import static model.HangmanState.initialize;
 
 public class MonadicHangman {
 
-	private static final Function<String, Reader<Environment, Unit>> printLn = m -> of(e -> e.println(m));
+	private static final Function<String,
+			                        Reader<Environment, Unit>> printLn = m -> of(e -> e.println(m));
 
 	private static final Reader<Environment, Unit> askForName = printLn.apply("Please enter your name: ");
 	private static final Reader<Environment, String> readName = of(Console::readLine);
@@ -37,7 +38,8 @@ public class MonadicHangman {
 	private static final Function<Tuple<HangmanState, Character>,
 			                        HangmanState> evaluateLetter = t -> t._1().play(t._2());
 
-	private static final Function<HangmanState, Reader<Environment, HangmanState>> lift = hs -> Reader.of(e -> hs);
+	private static final Function<HangmanState,
+			                        Reader<Environment, HangmanState>> lift = hs -> of(e -> hs);
 
 	private static final Function<HangmanState,
 			                        Reader<Environment, HangmanState>> turn = hs -> lift.apply(hs)
@@ -45,6 +47,7 @@ public class MonadicHangman {
 			                                                                            .map(evaluateLetter)
 			                                                                            .flatMap(printGameState);
 
+	@SuppressWarnings("OptionalGetWithoutIsPresent")
 	private static final Function<HangmanState,
 			                        Reader<Environment, HangmanState>> gameLoop = s -> of(e -> Stream.iterate(s, ns -> turn.apply(ns)
 			                                                                                                               .run(e))
